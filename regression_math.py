@@ -20,7 +20,7 @@ def create_ordered_pair(x, y, x_color, y_color):
 
 class RegressionMath(ThreeDScene):
     def construct(self):
-        # TODO: Need script for start;
+        # TODO: Need script for start
         intro_text = Text("Least-Squares Linear Regression", font_size=64)
         self.play(Write(intro_text), run_time=3)
         self.wait(2)
@@ -65,8 +65,8 @@ class RegressionMath(ThreeDScene):
         self.wait(2)
         # First, we need to create orthogonal bases for the plane:
         plane = NumberPlane(
-            x_range=[-7, 7, 1],
-            y_range=[-4, 4, 1],
+            # x_range=[-7, 7, 1],
+            # y_range=[-4, 4, 1],
             background_line_style={
                 "stroke_color": GREY,
                 "stroke_width": 1,
@@ -74,59 +74,88 @@ class RegressionMath(ThreeDScene):
             },
             axis_config={"stroke_width": 4},
         )
-        self.play(FadeIn(plane))
-        one_vector = Arrow(
-            plane.c2p(0, 0),
-            plane.c2p(1, 1),
-            buff=0,
-            stroke_width=4,
+        axes = ThreeDAxes(
+            x_range=(-10, 10),
+            y_range=(-10, 10),
+            z_range=(-10, 10),
+        )
+        one = np.array([1, 1, 1])
+        x = np.array([-3, -2, -1])
+        normal = np.cross(one, x)
+        basis_matrix = np.column_stack([one / np.linalg.norm(one),
+                                        x / np.linalg.norm(x),
+                                        normal / np.linalg.norm(normal)])
+        plane.apply_matrix(basis_matrix)
+        self.play(FadeIn(axes))
+        self.move_camera(
+            phi=60 * DEGREES,
+            theta=-135 * DEGREES,
+            run_time=3
+        )
+        self.begin_ambient_camera_rotation(rate=0.3)
+        one_vector = Arrow3D(
+            axes.c2p(0, 0, 0),
+            axes.c2p(*one),
+            # buff=0,
+            # stroke_width=4,
             color=GREEN,
         )
-        self.play(GrowArrow(one_vector))
-        x_vector_2d = Arrow(
-            plane.c2p(0, 0),
-            plane.c2p(2, 3),
-            buff=0,
-            stroke_width=4,
+        self.add(one_vector)
+        x_vector_2d = Arrow3D(
+            axes.c2p(0, 0, 0),
+            axes.c2p(*x),
+            # buff=0,
+            # stroke_width=4,
             color=RED,
         )
-        x_par = x_vector_2d.copy()
-        self.play(GrowArrow(x_vector_2d))
+        x_par_vector = x_vector_2d.copy()
+        x_par = (np.dot(x, one) / np.dot(one, one)) * one
+        self.add(x_vector_2d)
         self.wait(1)
+        self.play(FadeIn(plane))
         self.play(one_vector.animate.become(
             Line(
-                plane.c2p(-10, -10),
-                plane.c2p(10, 10),
+                axes.c2p(*(one * -10)),
+                axes.c2p(*(one * 10)),
                 color=GREEN,
                 stroke_width=4
             )
         ))
         self.wait(1)
-        self.play(x_par.animate.become(
-            Arrow(
-                plane.c2p(0, 0),
-                plane.c2p(2.5, 2.5),
-                buff=0,
+        self.play(x_par_vector.animate.become(
+            Arrow3D(
+                axes.c2p(0, 0, 0),
+                axes.c2p(*x_par),
+                # buff=0,
                 color=YELLOW,
-                stroke_width=4
+                # stroke_width=4
             )
         ))
         self.wait(1)
-        self.play(x_vector_2d.animate.become(
-            Arrow(
-                plane.c2p(0, 0),
-                plane.c2p(-0.5, 0.5),
-                buff=0,
-                color=RED,
-                stroke_width=4
-            )
-        ))
-        self.play(FadeOut(x_par))
+        x_orthog = x - x_par
+        normal = np.cross(one, x_orthog)
+        basis_matrix_orthog = np.column_stack([one / np.linalg.norm(one),
+                                        x_orthog / np.linalg.norm(x_orthog),
+                                        normal / np.linalg.norm(normal)])
+        self.play(
+            x_vector_2d.animate.become(
+                Arrow3D(
+                    axes.c2p(0, 0, 0),
+                    axes.c2p(*x_orthog),
+                    # buff=0,
+                    color=RED,
+                    # stroke_width=4
+                )
+            ),
+            plane.animate.apply_matrix(basis_matrix_orthog @ np.linalg.inv(basis_matrix))
+        )
+        self.play(FadeOut(x_par_vector))
         self.wait(1)
+        x_orthog_norm = x_orthog / np.linalg.norm(x_orthog)
         self.play(x_vector_2d.animate.become(
             Line(
-                plane.c2p(-10, 10),
-                plane.c2p(10, -10),
+                axes.c2p(*(x_orthog_norm * -20)),
+                axes.c2p(*(x_orthog_norm * 20)),
                 color=RED,
                 stroke_width=4
             )
@@ -136,7 +165,8 @@ class RegressionMath(ThreeDScene):
         # Then, this would be the projection of y onto the one-vector, and this would be the projection of y onto the orthogonal basis we just created.
         # Now, because these bases are orthogonal, we can simply add up these projection vectors to get the vector to the point closest to y on the plane.
         # TODO: Add animation for projection of y onto plane spanned by 1 and x.
-        self.wait(2)
+        self.wait(4)
+        self.stop_ambient_camera_rotation()
 
 def render_manim():
     command = ["manim", "-pql", "regression_math.py", "RegressionMath"]
