@@ -23,12 +23,12 @@ class RegressionVisualization(ThreeDScene):
         end_v1 = axes.c2p(-10, -2, 3)
         end_v2 = axes.c2p(2, 4, 6)
 
-        v1 = Arrow3D(
+        v1 = Arrow(
             start=origin,
             end=end_v1,
             color=RED,
         )
-        v2 = Arrow3D(
+        v2 = Arrow(
             start=origin,
             end=end_v2,
             color=BLUE,
@@ -37,9 +37,9 @@ class RegressionVisualization(ThreeDScene):
         # Add everything
         self.play(Create(axes))
         self.wait(2)
-        self.play(Create(v1))
+        self.play(GrowArrow(v1))
         self.wait(1)
-        self.play(Create(v2))
+        self.play(GrowArrow(v2))
 
         # Spin the camera around the scene
         # This rotates about the Z-axis by changing theta continuously
