@@ -117,29 +117,64 @@ class RegressionMath(ThreeDScene):
 
         self.add(x_vector_3d, one_vector)
 
-        scales = [
-            (2.5, 5.0),
-            (-2.5, -5.0),
-            (2.5, -5.0),
-            (-2.5, 5.0),
-            (0, 6.0),
-            (0, -6.0),
-            (2.0, 0),
-            (-2.0, 0),
-            (0.5, 1.0),
-            (-1.2, 2.5),
-        ]
 
         # span_text = MathTex(r"span({\overrightarrow{x}, \overrightarrow{1}})")
         # span_text.to_edge(UP, buff=0.15)
         # self.add(span_text)
 
-        for scale in scales:
-            self.play(x_scale.animate.set_value(scale[0]), one_scale.animate.set_value(scale[1]), run_time=1)
-            new_pt = scale[0] * x + scale[1] * one
-            dot = Dot3D(axes.c2p(*new_pt), color=WHITE)
-            self.play(FadeIn(dot), run_time=0.5)
+        scales = [
+            (1.0, -2.0),
+            (-1.0, 2.0),
+            (0, 4.0),
+            (0, -4.0),
+            (1.5, 0),
+            (-1.5, 0),
+            (0.5, 1.0),
+            (-0.5, -1.0),
+        ]
 
+        dots = VGroup()
+        for scale in scales:
+            self.play(
+                x_scale.animate.set_value(scale[0]),
+                one_scale.animate.set_value(scale[1]),
+                run_time=0.5
+            )
+            new_pt = scale[0] * x + scale[1] * one
+            dot = Dot3D(axes.c2p(*new_pt), color=WHITE, radius=0.08)
+            dots.add(dot)
+            self.play(FadeIn(dot), run_time=0.2)
+
+        self.wait(1)
+
+        u_vec = one / np.linalg.norm(one)
+        x_proj = np.dot(x, u_vec) * u_vec
+        x_orth = x - x_proj
+        v_vec = x_orth / np.linalg.norm(x_orth)
+        normal_vec = np.cross(u_vec, v_vec)
+
+        rotation_matrix = np.column_stack([u_vec, v_vec, normal_vec])
+
+        flat_plane = NumberPlane(
+            x_range=[-6, 6, 1],
+            y_range=[-6, 6, 1],
+            background_line_style={
+                "stroke_color": TEAL,
+                "stroke_width": 2,
+                "stroke_opacity": 0.6
+            },
+            faded_line_style={
+                "stroke_color": TEAL,
+                "stroke_width": 1,
+                "stroke_opacity": 0.3
+            },
+            axis_config={"stroke_width": 0}
+        )
+
+        flat_plane.apply_matrix(rotation_matrix)
+        self.play(Create(flat_plane), run_time=3)
+
+        self.move_camera(phi=75 * DEGREES, theta=-110 * DEGREES, run_time=3)
         self.wait(2)
 
         # self.wait(1)
