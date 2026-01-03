@@ -17,7 +17,7 @@ def create_ordered_pair(x, y, x_color, y_color):
     point[2].shift(DOWN * 0.15)
     return point
 
-class VectorizedCoordinates(Scene):
+class RegressionConceptual(Scene):
     def construct(self):
         # AFTER INTRO
         # Now, let's dive into the concepts behind how linear regression is performed.
@@ -61,7 +61,7 @@ class VectorizedCoordinates(Scene):
         # Then, the result, y-hat_i, is the y predicted by the regression line.
         # This equation here predicts a single y when given a single x.
         brace = Brace(singular_equation, DOWN)
-        brace_text = brace.get_tex(r"Predicts a singular $y$-value")
+        brace_text = brace.get_tex(r"\text{Predicts a singular } y\text{-value}")
         self.play(GrowFromCenter(brace), Write(brace_text), run_time=2)
         self.wait(2)
 
@@ -84,13 +84,13 @@ class VectorizedCoordinates(Scene):
 
         # This equation now predicts all y-values at once, from a single given x-vector.
         brace = Brace(vector_equation, DOWN)
-        brace_text = brace.get_tex(r"Predicts all $y$-values at once")
+        brace_text = brace.get_tex(r"\text{Predicts all } y\text{-values at once}")
         self.play(GrowFromCenter(brace), Write(brace_text), run_time=2)
         self.wait(2)
 
         # We can also see from this equation that y-hat, the prediction, is a linear combination of the x-vector and a vector of n ones.
         linear_combo_brace = Brace(vector_equation[1], UP)
-        linear_combo_text = linear_combo_brace.get_tex(r"Linear Combination of $\overrightarrow{x}$ and $\overrightarrow{1}$")
+        linear_combo_text = linear_combo_brace.get_tex(r"\text{Linear Combination of } \overrightarrow{x} \text{ and } \overrightarrow{1}")
         self.play(GrowFromCenter(linear_combo_brace), Write(linear_combo_text), run_time=2)
         self.wait(10)
         # Thinking about this geometrically, this means that y-hat must lie on the plane spanned by the x-vector and the 1-vector.
@@ -106,7 +106,7 @@ class VectorizedCoordinates(Scene):
         self.wait(2)
 
 def render_manim():
-    command = ["manim", "-p", "--renderer=cairo", "vectorized_coordinates.py", "VectorizedCoordinates"]
+    command = ["manim", "-p", "--renderer=cairo", "regression_conceptual.py", "RegressionConceptual"]
     subprocess.run(command)
 
 if __name__ == "__main__":
