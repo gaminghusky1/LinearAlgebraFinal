@@ -6,7 +6,6 @@ config.pixel_width = 1920
 config.pixel_height = 1080
 config.frame_rate = 60
 
-
 class RegressionIntro(Scene):
     def construct(self):
         # TODO: Need script for start

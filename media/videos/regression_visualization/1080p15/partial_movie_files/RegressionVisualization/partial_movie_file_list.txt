@@ -1,8 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/Users/JustinMa/PycharmProjects/LinearAlgebraFinal/media/videos/regression_visualization/1080p15/partial_movie_files/RegressionVisualization/3113174939_3497903597_223132457.mp4'
-file 'file:/Users/JustinMa/PycharmProjects/LinearAlgebraFinal/media/videos/regression_visualization/1080p15/partial_movie_files/RegressionVisualization/954415009_789064381_3661340242.mp4'
-file 'file:/Users/JustinMa/PycharmProjects/LinearAlgebraFinal/media/videos/regression_visualization/1080p15/partial_movie_files/RegressionVisualization/954415009_60125857_977248380.mp4'
-file 'file:/Users/JustinMa/PycharmProjects/LinearAlgebraFinal/media/videos/regression_visualization/1080p15/partial_movie_files/RegressionVisualization/954415009_2631580503_1560899780.mp4'
-file 'file:/Users/JustinMa/PycharmProjects/LinearAlgebraFinal/media/videos/regression_visualization/1080p15/partial_movie_files/RegressionVisualization/954415009_4090707207_3836091405.mp4'
-file 'file:/Users/JustinMa/PycharmProjects/LinearAlgebraFinal/media/videos/regression_visualization/1080p15/partial_movie_files/RegressionVisualization/1359046435_4130465104_3703024748.mp4'
-file 'file:/Users/JustinMa/PycharmProjects/LinearAlgebraFinal/media/videos/regression_visualization/1080p15/partial_movie_files/RegressionVisualization/135270656_2631580503_3364055328.mp4'
