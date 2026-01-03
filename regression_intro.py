@@ -10,10 +10,10 @@ config.frame_rate = 60
 class RegressionIntro(Scene):
     def construct(self):
         # TODO: Need script for start
-        # intro_text = Text("Least-Squares Linear Regression", font_size=64)
-        # self.play(Write(intro_text), run_time=3)
-        # self.wait(2)
-        # self.play(FadeOut(intro_text))
+        intro_text = Text("Least-Squares Linear Regression", font_size=64)
+        self.play(Write(intro_text), run_time=3)
+        self.wait(2)
+        self.play(FadeOut(intro_text))
 
         # Regression example
         data_points = np.array([
