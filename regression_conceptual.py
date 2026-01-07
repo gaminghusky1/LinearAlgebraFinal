@@ -40,7 +40,7 @@ class RegressionConceptual(Scene):
             [[points[0][3].copy()], [points[1][3].copy()], [points[2][3].copy()], [MathTex(r"\vdots")], [points[4][3].copy()]],
             element_alignment_corner=ORIGIN
         ).shift(RIGHT)
-        # For linear regression, however, we'll want to separate the x's and y's into their own vectors, to help with the equations we will use.
+        # For linear regression, however, we'll want to separate the x's and y's into their own vectors. This will help with the equations we will use later on.
         self.play(TransformMatchingShapes(points, VGroup(x_vector, y_vector)))
         self.wait(2)
         self.play(FadeOut(x_vector), FadeOut(y_vector))
@@ -56,7 +56,7 @@ class RegressionConceptual(Scene):
         self.play(Write(slope_intercept_text), run_time=2)
         self.wait(1)
 
-        # The way we "predict" the y for a certain x using our regression line is by plugging that
+        # The way we "predict" the y for a certain x is by using our regression line equation. By plugging an
         # x-value, x_i, into our slope-intercept form equation and solving for the result.
         # Then, the result, y-hat_i, is the y predicted by the regression line.
         # This equation here predicts a single y when given a single x.
@@ -94,16 +94,34 @@ class RegressionConceptual(Scene):
         self.play(GrowFromCenter(linear_combo_brace), Write(linear_combo_text), run_time=2)
         self.wait(10)
         # Thinking about this geometrically, this means that y-hat must lie on the plane spanned by the x-vector and the 1-vector.
-        # Recall that our goal in linear regression is to find the best values for m and b, or the slope and y-intercept,
+        # Recall that our goal in linear regression is to find the values of m and b, or the slope and y-intercept of the regression line,
         # that will minimize the sum of squared errors between the y-values of the points and the y-values of the regression line predictions.
-        # To do this, we can find the regression line prediction vector, y-hat, that's closest to the actual y-vector,
-        # which will be the closest point to the y-vector on the plane spanned by x and 1.
-        # Then, because y-hat lies on the plane spanned by x and 1, we can break it down into its components along the x-vector and 1-vector to get m and b.
-        # Now, it turns out that the closest point to y on the plane spanned by x and 1 is actually the projection of y onto that plane.
-        # Once we find this projection, we can then find m and b and complete our regression.
-        # But how do we project y onto a plane?
+        # To do this, we can find the point on the plane spanned by the x-vector and the 1-vector that's closest to the actual y-vector,
+        # which is also just y-hat, and then break it down into its x and 1 components to find m and b.
+        # Then, we'll have the slope and intercept of our regression line.
+
         self.play(FadeOut(vector_equation, slope_intercept_text, brace, brace_text, linear_combo_brace, linear_combo_text))
         self.wait(2)
+
+        # As a note, minimizing the distance between y-hat and the y vector minimizes the squared error because the distance between two points is equal to the square root of the sum of
+        # the squared error, and minimizing the square root of the errors is the same as minimizing the square of the errors themselves because
+        # square root is an increasing function.
+
+        distance_eq = Tex(r"Distance = $\sqrt{\sum{(y_i-\hat{y_i})^2}}$")
+        self.play(Write(distance_eq), run_time=5)
+        self.wait(2)
+
+        self.play(FadeOut(distance_eq))
+        self.wait(1)
+
+        # Now, to actually find that point on the plane spanned by 1 and x that's closest to the y-vector, we can simply just
+        # project the y-vector onto that plane. This works because a projection gives the point on a plane that minimizes the
+        # distance to another point.
+        # But how do we project y onto a plane?
+
+        self.play(FadeIn(vector_equation, slope_intercept_text, brace, brace_text, linear_combo_brace, linear_combo_text))
+        self.wait(2)
+
 
 def render_manim():
     command = ["manim", "-p", "--renderer=cairo", "regression_conceptual.py", "RegressionConceptual"]

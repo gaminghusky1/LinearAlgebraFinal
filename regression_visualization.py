@@ -173,31 +173,31 @@ class RegressionVisualization(ThreeDScene):
         #     )
         # )
 
-        x_par_vector = x_vector_3d.copy()
-
-        self.play(x_par_vector.animate.become(
-            Arrow3D(
-                axes.c2p(0, 0, 0),
-                axes.c2p(*x_par),
-                # buff=0,
-                color=YELLOW,
-                # stroke_width=4
-            )
-        ))
-
-        x_orthog_vector = x_vector_3d.copy()
-
-        self.play(x_orthog_vector.animate.become(
-            Arrow3D(
-                axes.c2p(0, 0, 0),
-                axes.c2p(*x_orthog),
-                # buff=0,
-                color=BLUE,
-                # stroke_width=4
-            )
-        ))
-
-        self.play(FadeOut(x_par_vector))
+        # x_par_vector = x_vector_3d.copy()
+        #
+        # self.play(x_par_vector.animate.become(
+        #     Arrow3D(
+        #         axes.c2p(0, 0, 0),
+        #         axes.c2p(*x_par),
+        #         # buff=0,
+        #         color=YELLOW,
+        #         # stroke_width=4
+        #     )
+        # ))
+        #
+        # x_orthog_vector = x_vector_3d.copy()
+        #
+        # self.play(x_orthog_vector.animate.become(
+        #     Arrow3D(
+        #         axes.c2p(0, 0, 0),
+        #         axes.c2p(*x_orthog),
+        #         # buff=0,
+        #         color=BLUE,
+        #         # stroke_width=4
+        #     )
+        # ))
+        #
+        # self.play(FadeOut(x_par_vector))
 
         plane = NumberPlane(
             # x_range=[-7, 7, 1],
@@ -222,7 +222,7 @@ class RegressionVisualization(ThreeDScene):
 
         plane.apply_function(map_to_span)
 
-        self.play(Create(plane, run_time=1))
+        self.play(DrawBorderThenFill(plane), run_time=2)
         self.play(FadeOut(dots))
 
         # Do projection
@@ -285,6 +285,12 @@ class RegressionVisualization(ThreeDScene):
 
         self.wait(2)
 
+
+
+        # This concept of using projection to minimize the distance between two points can be used for more regressions
+        # than just linear as well. In fact, it can be used to find any regression in the form m1 * f1(x) + m2 * f2(x) + ...
+        # We'd just have to change the math slightly to project onto the span of (f1(x), f2(x), ...) rather than span(x, 1), but the core idea is the same.
+
         # x_par_vector = x_vector_3d.copy()
         #
         # self.wait(1)
@@ -340,7 +346,9 @@ class RegressionVisualization(ThreeDScene):
         # Let's say that y doesn't lie on this plane, but the closest point to y is here.
         # Then, this would be the projection of y onto the one-vector, and this would be the projection of y onto the orthogonal basis we just created.
         # Now, because these bases are orthogonal, we can simply add up these projection vectors to get the vector to the point closest to y on the plane.
-        # TODO: Add animation for projection of y onto plane spanned by 1 and x.
+
+
+
         self.wait(4)
         self.stop_ambient_camera_rotation()
 

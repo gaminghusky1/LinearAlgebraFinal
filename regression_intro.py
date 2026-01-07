@@ -9,6 +9,8 @@ config.frame_rate = 60
 class RegressionIntro(Scene):
     def construct(self):
         # TODO: Need script for start
+        # In this video, we will explore least-squares linear regression, first explaining what it is
+        # and what it does, and then diving deep into the math behind how it works.
         intro_text = Text("Least-Squares Linear Regression", font_size=64)
         self.play(Write(intro_text), run_time=3)
         self.wait(2)
@@ -43,13 +45,15 @@ class RegressionIntro(Scene):
             },
         )
 
-        self.play(Create(plane), run_time=1)
+        # Let's start with a plane
+        self.play(DrawBorderThenFill(plane), run_time=2)
 
         point_group = VGroup()
 
         for point in data_points:
             point_group.add(Dot(plane.c2p(*point), color=YELLOW))
 
+        # And add some data points
         self.wait(1)
         self.play(FadeIn(point_group), run_time=2)
 
@@ -58,6 +62,8 @@ class RegressionIntro(Scene):
         # Draw Regression Line
         regression_line = plane.plot(regression_function, color=WHITE)
 
+        # Least-squares linear regression is essentially finding the line that best fits a set of data points by
+        # minimizing the squared distance between the points and the predicted line, which is also called the squared error.
         self.play(Create(regression_line), run_time=2)
 
         error_lines = VGroup()
@@ -87,6 +93,7 @@ class RegressionIntro(Scene):
 
         self.play(*[FadeIn(exp) for exp in error_exponents], run_time=1.5)
 
+        # You can see from this calculation that the sum squared error for this regression line is ....
         squared_errors = VGroup()
         square_transforms = []
         for error, exponent in zip(errors, error_exponents):
@@ -115,6 +122,8 @@ class RegressionIntro(Scene):
         errors.target.next_to(graph_group, UP, buff=0.5)
         self.play(MoveToTarget(errors), run_time=2)
 
+        # We can show that this is the minimum squared error by moving the regression line slightly in either direction
+        # and observing that the error increases no matter how we change it.
         plus_signs = VGroup()
         for left_error, right_error in zip(errors[:-1], errors[1:]):
             plus = MathTex("+", font_size=desired_font_size)
@@ -142,21 +151,13 @@ class RegressionIntro(Scene):
         equation_group = VGroup(left_expression, equals_sign, sse_decimal)
         self.play(equation_group.animate.move_to(errors.get_center()), run_time=0.8)
 
-        left_expression_copy = left_expression.copy()
-        left_expression_copy.set_opacity(0)
-        self.add(left_expression_copy)
-
         self.play(equals_sign.animate.set_opacity(1), run_time=0.6)
-        self.play(left_expression_copy.animate.set_opacity(1), run_time=0.2)
 
         self.wait(1)
 
-        collapse_animation = AnimationGroup(
-            left_expression_copy.animate.move_to(sse_decimal.get_center()).scale(0.1).set_opacity(0),
-            sse_decimal.animate.set_opacity(1),
-            lag_ratio=0.1
-        )
-        self.play(collapse_animation, run_time=2)
+        self.remove(sse_decimal)
+        sse_decimal.set_opacity(1)
+        self.play(TransformFromCopy(left_expression, sse_decimal), run_time=2)
         self.wait(2)
 
 
