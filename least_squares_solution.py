@@ -2,6 +2,8 @@ from manim import *
 import numpy as np
 import subprocess
 
+config.pixel_width = 1920
+config.pixel_height = 1080
 config.frame_rate = 60
 
 

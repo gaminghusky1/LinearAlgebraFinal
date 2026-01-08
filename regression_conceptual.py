@@ -67,7 +67,7 @@ class RegressionConceptual(Scene):
 
         self.play(FadeOut(brace, brace_text))
 
-        vector_equation = MathTex(r"\hat{y}=", r"m\overrightarrow{x}+b\overrightarrow{1}")
+        vector_equation = MathTex(r"\hat{y}=", r"m", r"\overrightarrow{x}", r"+", r"b", r"\overrightarrow{1}")
 
         vector_equation.move_to(singular_equation.get_center())
 
@@ -89,18 +89,28 @@ class RegressionConceptual(Scene):
         self.wait(2)
 
         # We can also see from this equation that y-hat, the prediction, is a linear combination of the x-vector and a vector of n ones.
-        linear_combo_brace = Brace(vector_equation[1], UP)
+        linear_combo_brace = Brace(vector_equation[1:], UP)
         linear_combo_text = linear_combo_brace.get_tex(r"\text{Linear Combination of } \overrightarrow{x} \text{ and } \overrightarrow{1}")
         self.play(GrowFromCenter(linear_combo_brace), Write(linear_combo_text), run_time=2)
-        self.wait(10)
+        self.wait(5)
         # Thinking about this geometrically, this means that y-hat must lie on the plane spanned by the x-vector and the 1-vector.
+        y_hat_span_eq = MathTex(r"\hat{y} \in", r"\mathrm{span}(\overrightarrow{x}, \overrightarrow{1})").next_to(vector_equation, DOWN * 6)
+        self.play(Write(y_hat_span_eq[0]), run_time=2)
+        x_and_1_copy = VGroup(vector_equation[2].copy(), vector_equation[5].copy())
+        self.play(TransformMatchingShapes(x_and_1_copy, y_hat_span_eq[1]), run_time=2)
+        self.wait(2)
         # Recall that our goal in linear regression is to find the values of m and b, or the slope and y-intercept of the regression line,
         # that will minimize the sum of squared errors between the y-values of the points and the y-values of the regression line predictions.
+        self.play(Circumscribe(vector_equation[1]), run_time=2)
+        self.play(Circumscribe(vector_equation[4]), run_time=2)
+        self.wait(4)
         # To do this, we can find the point on the plane spanned by the x-vector and the 1-vector that's closest to the actual y-vector,
         # which is also just y-hat, and then break it down into its x and 1 components to find m and b.
         # Then, we'll have the slope and intercept of our regression line.
 
-        self.play(FadeOut(vector_equation, slope_intercept_text, brace, brace_text, linear_combo_brace, linear_combo_text))
+        final_eq = VGroup(vector_equation, slope_intercept_text, brace, brace_text, linear_combo_brace, linear_combo_text, y_hat_span_eq)
+
+        self.play(FadeOut(final_eq))
         self.wait(2)
 
         # As a note, minimizing the distance between y-hat and the y vector minimizes the squared error because the distance between two points is equal to the square root of the sum of
@@ -117,9 +127,10 @@ class RegressionConceptual(Scene):
         # Now, to actually find that point on the plane spanned by 1 and x that's closest to the y-vector, we can simply just
         # project the y-vector onto that plane. This works because a projection gives the point on a plane that minimizes the
         # distance to another point.
-        # But how do we project y onto a plane?
 
-        self.play(FadeIn(vector_equation, slope_intercept_text, brace, brace_text, linear_combo_brace, linear_combo_text))
+        # Now let's see this visually. -> regression_visualization
+
+        self.play(FadeIn(final_eq))
         self.wait(2)
 
 

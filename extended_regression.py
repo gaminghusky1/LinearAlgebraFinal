@@ -79,7 +79,7 @@ class ExtendedRegression(Scene):
             axis_config={"stroke_width": 3},
         )
 
-        self.play(Create(plane), run_time=2)
+        self.play(DrawBorderThenFill(plane), run_time=2)
 
         x_values = np.linspace(-4, 4, 9)
         base_y = np.array([-3.6, 0.7, -0.8, 0.5, 0.0, 0.9, -1.0, 3.1, 3.5])

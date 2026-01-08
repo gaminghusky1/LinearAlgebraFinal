@@ -44,7 +44,7 @@ class OrthogonalBases(Scene):
             color=GREEN,
             buff=0,
         )
-        # one_vector_tex = MathTex(r"\overrightarrow{1}", color=GREEN).move_to(one_vector.get_tip())
+        one_vector_tex = MathTex(r"\overrightarrow{1}", color=GREEN, font_size=30).next_to(one_vector.get_tip())
 
         x_vector = Arrow(
             start=plane.c2p(0, 0),
@@ -54,13 +54,13 @@ class OrthogonalBases(Scene):
         )
 
 
-        # x_vector_tex = MathTex(r"\overrightarrow{x}", color=RED).move_to(x_vector.get_tip())
+        x_vector_tex = MathTex(r"\overrightarrow{x}", color=RED, font_size=30).next_to(x_vector.get_tip())
 
         self.play(GrowArrow(one_vector), run_time=2)
-        # self.play(FadeIn(one_vector_tex))
+        self.play(FadeIn(one_vector_tex))
         self.wait(1)
         self.play(GrowArrow(x_vector), run_time=2)
-        # self.play(FadeIn(x_vector_tex))
+        self.play(FadeIn(x_vector_tex))
         self.wait(2)
 
         one_line = DashedLine(
@@ -89,10 +89,10 @@ class OrthogonalBases(Scene):
             buff=0,
         )
 
-        # proj_tex = MathTex(r"\text{proj}_{\overrightarrow{1}} \overrightarrow{x}", color=YELLOW).move_to(proj_one_x_vector.get_tip())
+        proj_tex = MathTex(r"\text{proj}_{\overrightarrow{1}} \overrightarrow{x}", color=YELLOW, font_size=30).next_to(proj_one_x_vector.get_tip())
 
         self.play(TransformFromCopy(x_vector, proj_one_x_vector))
-        # self.play(FadeIn(proj_tex))
+        self.play(FadeIn(proj_tex))
         self.wait(2)
 
         x_hat_vector = Arrow(
@@ -102,12 +102,12 @@ class OrthogonalBases(Scene):
             buff=0,
         )
 
-        # x_hat_vector_tex = MathTex(r"\hat{x}", color=BLUE).move_to(x_hat_vector.get_tip())
+        x_hat_vector_tex = MathTex(r"\hat{x}", color=BLUE, font_size=30).next_to(x_hat_vector.get_tip())
 
         self.play(TransformFromCopy(x_vector, x_hat_vector))
-        # self.play(FadeIn(x_hat_vector_tex))
+        self.play(FadeIn(x_hat_vector_tex))
 
-        self.play(FadeOut(x_vector, x_to_one_line, proj_one_x_vector))
+        self.play(FadeOut(x_vector, x_vector_tex, x_to_one_line, proj_one_x_vector, proj_tex))
 
         x_hat_line = DashedLine(
             start=plane.c2p(*(x_hat * -5)),

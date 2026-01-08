@@ -9,7 +9,6 @@ config.frame_rate = 60
 
 class RegressionVisualization(ThreeDScene):
     def construct(self):
-        # First, we need to create orthogonal bases for the plane:
         axes = ThreeDAxes(
             x_range=(-10, 10),
             y_range=(-10, 10),
@@ -79,6 +78,8 @@ class RegressionVisualization(ThreeDScene):
             )
         )
 
+        # Let's start with a red x-vector and a green one-vector sitting at the tip of the x-vector.
+
         self.add(x_vector_3d, one_vector)
 
         x_scale_label = DecimalNumber(
@@ -135,6 +136,9 @@ class RegressionVisualization(ThreeDScene):
             (1.0, 1.0),
         ]
 
+        # If we scale the x-vector and one-vector by different amounts, we can see that the points they reach slowly start to
+        # resemble a plane. This plane is, in fact, the span of the x and one vectors. Any point on this plane can be
+        # reached by a linear combination of one and x, which is exactly what we need to find m and b for our regression line.
         dots = VGroup()
         for a, b in scales:
             self.play(
@@ -226,6 +230,7 @@ class RegressionVisualization(ThreeDScene):
         self.play(FadeOut(dots))
 
         # Do projection
+        # Now, let's say our y point is here, some point in space not on the plane spanned by one and x.
         y = np.array([2, 3, 7])
         y_point = Dot3D(axes.c2p(*y), color=YELLOW, radius=0.06)
         self.play(FadeIn(y_point))
@@ -245,6 +250,7 @@ class RegressionVisualization(ThreeDScene):
 
         proj_dot = Dot3D(axes.c2p(*proj_y), color=BLUE, radius=0.06)
 
+        # Then, if we project this point onto the plane, we can find the closest point to y on the plane.
         self.play(Create(proj_line))
         self.play(FadeIn(proj_dot))
         self.wait(1)
@@ -253,6 +259,8 @@ class RegressionVisualization(ThreeDScene):
         A = np.column_stack([x, one])
         (a, b), *_ = np.linalg.lstsq(A, proj_y, rcond=None)
 
+        # We can now find how much of the x-vector and how much of the one-vector is needed to reach this point,
+        # and thus find m and b for our regression line.
         self.play(
             x_scale.animate.set_value(a),
             one_scale.animate.set_value(b),
@@ -285,7 +293,10 @@ class RegressionVisualization(ThreeDScene):
 
         self.wait(2)
 
+        # We've seen this visually, but how do we find this point algebraically? How can we reliably find the projection
+        # of y onto the plane spanned by x and one, and also break it down to find m and b?
 
+        # -> to orthogonal_bases.py
 
         # This concept of using projection to minimize the distance between two points can be used for more regressions
         # than just linear as well. In fact, it can be used to find any regression in the form m1 * f1(x) + m2 * f2(x) + ...
