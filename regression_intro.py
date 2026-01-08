@@ -11,6 +11,7 @@ class RegressionIntro(Scene):
         # TODO: Need script for start
         # In this video, we will explore least-squares linear regression, first explaining what it is
         # and what it does, and then diving deep into the math behind how it works.
+
         intro_text = Text("Least-Squares Linear Regression", font_size=64)
         self.play(Write(intro_text), run_time=3)
         self.wait(2)
