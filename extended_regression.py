@@ -9,6 +9,8 @@ config.frame_rate = 60
 
 class ExtendedRegression(Scene):
     def construct(self):
+        # Now, let's see how we can put all this knowledge together to actually find a regression line given a set of points mathematically.
+
         # ---- Tune these ----
         row_buff   = 0.35   # horizontal spacing between eq, arrow, span
         row_gap    = 0.65   # vertical gap between the two rows (smaller = tighter)
@@ -17,6 +19,10 @@ class ExtendedRegression(Scene):
         t_write_rs = 1.8
         pause      = 0.7
 
+        # This technique of minimizing the squared error by projecting y onto the subspace of all possible y-hats can be applied to
+        # more complex models than linear regression as well.
+        # For example, if we wanted to do a quadratic regression fitting three coefficients, we would minimize the distance of y to
+        # the span of the x^2, x, and one vector instead of just the span of the x and one vector,
         # ---- Objects ----
         linear_text = MathTex(r"\hat{y} = mx + b")
         linear_arrow = MathTex(r"\longrightarrow")
@@ -26,6 +32,10 @@ class ExtendedRegression(Scene):
         quadratic_arrow = MathTex(r"\longrightarrow")
         quadratic_span_text = MathTex(r"\mathrm{span}(x^2, x, 1)")
 
+        # Here, you can see an example of a cubic regression, which fits four coefficients by projecting y onto span(x^3, x^2, x, 1).
+        # You can see all the coefficients updating as the points are moved up and down.
+
+        # total time: 2.4 + 1.1 + 1.8 + 0.4 + 0.7 = 6.4
         def animate_row(eq, arrow, span, y_level):
             # Start: equation centered
             eq_start_pos = UP * y_level
@@ -52,17 +62,29 @@ class ExtendedRegression(Scene):
 
             return VGroup(eq, arrow, span)
 
+        self.wait(0.6)
+
         # ---- Linear row ----
         linear_row = animate_row(linear_text, linear_arrow, linear_span_text, y_level=0.0)
 
-        # Shift it up a bit (smaller vertical spacing)
-        self.wait(0.4)
+        # 7
+
         self.play(linear_row.animate.shift(UP * row_gap), run_time=0.8)
+
+        # 7.8
+
+        self.wait(10.2)
+
+        # 18
 
         # ---- Quadratic row (starts near center, slightly below) ----
         quadratic_row = animate_row(quadratic_text, quadratic_arrow, quadratic_span_text, y_level=-0.25)
 
-        self.wait(1)
+        # 24.4
+
+        self.wait(3.6)
+
+        # 28
 
         self.play(FadeOut(linear_row, run_time=0.5), FadeOut(quadratic_row, run_time=0.5))
         self.wait(0.5)
@@ -79,7 +101,11 @@ class ExtendedRegression(Scene):
             axis_config={"stroke_width": 3},
         )
 
+        # 29
+
         self.play(DrawBorderThenFill(plane), run_time=2)
+
+        # 31
 
         x_values = np.linspace(-4, 4, 9)
         base_y = np.array([-3.6, 0.7, -0.8, 0.5, 0.0, 0.9, -1.0, 3.1, 3.5])
@@ -114,6 +140,8 @@ class ExtendedRegression(Scene):
 
         self.play(AnimationGroup(*[FadeIn(dot) for dot in dots], lag_ratio=0.08), run_time=2)
 
+        # 33
+
         regression_curve = always_redraw(
             lambda: plane.plot(
                 lambda x: np.polyval(current_coeffs(), x),
@@ -121,7 +149,9 @@ class ExtendedRegression(Scene):
                 color=YELLOW,
             )
         )
-        self.play(Create(regression_curve), run_time=2)
+        self.play(Create(regression_curve), run_time=3)
+
+        # 36
 
         def build_equation(coeffs):
             cleaned = [0.0 if abs(c) < 1e-4 else c for c in coeffs]
@@ -151,6 +181,8 @@ class ExtendedRegression(Scene):
         eq_anchor = equation.get_center()
         self.play(FadeIn(equation), run_time=1.5)
 
+        # 37.5
+
         def equation_updater(mob):
             new = build_equation(current_coeffs()).to_edge(UP)
             new.move_to(eq_anchor)  # prevents equation from sliding with width changes
@@ -158,12 +190,22 @@ class ExtendedRegression(Scene):
 
         equation.add_updater(equation_updater)
 
+        self.wait(3)
+
+        # 40.5
+
         # ONE cycle + smooth => starts still, moves, ends still (no warbly multi-cycle)
         self.play(
             t_tracker.animate.set_value(2 * PI),
             run_time=8,
             rate_func=smooth,
         )
+
+        # 48.5
+
+        self.wait(4)
+
+        self.play(FadeOut(equation), FadeOut(plane), FadeOut(regression_curve), run_time=1)
 
         self.wait(1)
 

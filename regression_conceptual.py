@@ -6,6 +6,7 @@ config.pixel_width = 1920
 config.pixel_height = 1080
 config.frame_rate = 60
 
+
 def create_ordered_pair(x, y, x_color, y_color):
     point = VGroup(
         MathTex("("),
@@ -16,6 +17,7 @@ def create_ordered_pair(x, y, x_color, y_color):
     ).arrange(RIGHT, buff=0.15)
     point[2].shift(DOWN * 0.15)
     return point
+
 
 class RegressionConceptual(Scene):
     def construct(self):
@@ -34,11 +36,13 @@ class RegressionConceptual(Scene):
         self.play(Write(points), run_time=4)
         self.wait(2)
         x_vector = MobjectMatrix(
-            [[points[0][1].copy()], [points[1][1].copy()], [points[2][1].copy()], [MathTex(r"\vdots")], [points[4][1].copy()]],
+            [[points[0][1].copy()], [points[1][1].copy()], [points[2][1].copy()], [MathTex(r"\vdots")],
+             [points[4][1].copy()]],
             element_alignment_corner=ORIGIN
         ).shift(LEFT)
         y_vector = MobjectMatrix(
-            [[points[0][3].copy()], [points[1][3].copy()], [points[2][3].copy()], [MathTex(r"\vdots")], [points[4][3].copy()]],
+            [[points[0][3].copy()], [points[1][3].copy()], [points[2][3].copy()], [MathTex(r"\vdots")],
+             [points[4][3].copy()]],
             element_alignment_corner=ORIGIN
         ).shift(RIGHT)
         # For linear regression, however, we'll want to separate the x's and y's into their own vectors. This will help with the equations we will use later on.
@@ -91,11 +95,13 @@ class RegressionConceptual(Scene):
 
         # If we look closely, we can also see from this equation that y-hat, the prediction, is a linear combination of the x-vector and a vector of n ones.
         linear_combo_brace = Brace(vector_equation[1:], UP)
-        linear_combo_text = linear_combo_brace.get_tex(r"\text{Linear Combination of } \overrightarrow{x} \text{ and } \overrightarrow{1}")
-        self.play(GrowFromCenter(linear_combo_brace), Write(linear_combo_text), run_time=2)
-        self.wait(5)
+        linear_combo_text = linear_combo_brace.get_tex(
+            r"\text{Linear Combination of } \overrightarrow{x} \text{ and } \overrightarrow{1}")
+        self.play(GrowFromCenter(linear_combo_brace), Write(linear_combo_text), run_time=4)
+        self.wait(2)
         # Thinking about this geometrically, this means that y-hat must lie on the plane spanned by the x-vector and the 1-vector.
-        y_hat_span_eq = MathTex(r"\hat{y} \in", r"\mathrm{span}(\overrightarrow{x}, \overrightarrow{1})").next_to(vector_equation, DOWN * 6)
+        y_hat_span_eq = MathTex(r"\hat{y} \in", r"\mathrm{span}(\overrightarrow{x}, \overrightarrow{1})").next_to(
+            vector_equation, DOWN * 6)
         self.play(Write(y_hat_span_eq[0]), run_time=2)
         x_and_1_copy = VGroup(vector_equation[2].copy(), vector_equation[5].copy())
         self.play(TransformMatchingShapes(x_and_1_copy, y_hat_span_eq[1]), run_time=3)
@@ -106,21 +112,35 @@ class RegressionConceptual(Scene):
         self.play(Circumscribe(vector_equation[4]), run_time=1)
         self.wait(8)
 
-        final_eq = VGroup(vector_equation, slope_intercept_text, brace, brace_text, linear_combo_brace, linear_combo_text, y_hat_span_eq)
+        final_eq = VGroup(vector_equation, slope_intercept_text, brace, brace_text, linear_combo_brace,
+                          linear_combo_text, y_hat_span_eq)
 
         self.play(FadeOut(final_eq), run_time=1)
         self.wait(2)
 
-        # As a note, minimizing the distance between y-hat and the y vector minimizes the squared error because the distance between two points is equal to the square root of the sum of
-        # the squared error, and minimizing the square root of the errors is the same as minimizing the square of the errors themselves because
-        # square root is an increasing function.
+        # Now, the key insight on how to do this comes when we look at the formulas for the sum squared error and the distance
+        # formula.
+        mse_func = MathTex(r"\text{SSE} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2", font_size=42).to_edge(UP)
+        distance_eq = MathTex(r"\text{Distance} = \sqrt{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}", font_size=42)
 
-        distance_eq = Tex(r"Distance = $\sqrt{\sum{(y_i-\hat{y_i})^2}}$")
-        self.play(Write(distance_eq), run_time=5)
-        self.wait(2)
+        equations_group = VGroup(mse_func, distance_eq).arrange(DOWN).move_to(ORIGIN)
 
-        self.play(FadeOut(distance_eq))
+        self.play(Write(mse_func), run_time=3)
         self.wait(1)
+        self.play(Write(distance_eq), run_time=3)
+        self.wait(21)
+
+        # The formula for the distance between the y vector and the y-hat point is almost identical to the sum squared error,
+        # except for the square root. But it turns out, when we're minimizing a value, the square root really doesn't matter
+        # because it's an increasing function, so if we minimize the distance between y-hat and y, we will also minimize
+        # the sum squared error.
+
+        self.play(FadeOut(distance_eq), FadeOut(mse_func), run_time=1)
+        self.wait(1)
+
+        # So, to minimize the sum squared error we can find the y-hat that's closest to the actual y-vector,
+        # and then break it down into its x and 1 components to find m and b.
+        # Then, we'll have the slope and intercept of our regression line.
 
         # Now, to actually find that point on the plane spanned by 1 and x that's closest to the y-vector, we can simply just
         # project the y-vector onto that plane. This works because a projection gives the point on a plane that minimizes the
@@ -135,6 +155,7 @@ class RegressionConceptual(Scene):
 def render_manim():
     command = ["manim", "-p", "--renderer=cairo", "regression_conceptual.py", "RegressionConceptual"]
     subprocess.run(command)
+
 
 if __name__ == "__main__":
     render_manim()

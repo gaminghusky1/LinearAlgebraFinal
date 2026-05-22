@@ -19,12 +19,15 @@ class RegressionVisualization(ThreeDScene):
         x_par = (np.dot(x, one) / np.dot(one, one)) * one
         x_orthog = x - x_par
 
-        self.play(FadeIn(axes))
+        self.play(FadeIn(axes, run_time=2))
         self.move_camera(
             phi=60 * DEGREES,
             theta=-45 * DEGREES,
             run_time=3
         )
+
+        # 5
+
         self.begin_ambient_camera_rotation(rate=0.2)
 
         x_scale = ValueTracker(1.0)
@@ -61,6 +64,9 @@ class RegressionVisualization(ThreeDScene):
         # x_vector_3d.add_updater(x_vector_updater)
         # one_vector.add_updater(one_vector_updater)
 
+        self.wait(7)
+
+        # 12
         x_vector_3d = always_redraw(
             lambda: Arrow3D(
                 axes.c2p(0, 0, 0),
@@ -68,6 +74,10 @@ class RegressionVisualization(ThreeDScene):
                 color=RED,
             )
         )
+
+        self.wait(1)
+
+        # 13
 
         # one vector whose base follows the tip of x
         one_vector = always_redraw(
@@ -78,7 +88,21 @@ class RegressionVisualization(ThreeDScene):
             )
         )
 
-        # Let's start with a red x-vector and a green one-vector sitting at the tip of the x-vector.
+        # To visualize the process of finding a regression, we can model it with three data points, which means the x and y vector
+        # will be in three dimensions.
+        #
+        # Let's start by making a red x-vector and a green one-vector sitting at the tip of the x-vector.
+
+        # If we scale the x-vector and one-vector by different amounts, we can see that the points they reach slowly start to
+        # resemble a plane. This plane is, in fact, the span of the x and one vectors. Any point on this plane can be
+        # reached by a linear combination of one and x, which is exactly what we need to find m and b for our regression line.
+
+        # Now, let's say our y point is here, some point in space not on the plane spanned by one and x.
+
+        # Then, if we project this point onto the plane, we can find the closest point to y on the plane and therefore reachable by our linear regression.
+
+        # We can now find how much of the x-vector and how much of the one-vector is needed to reach this point,
+        # and that gives us the m and b coefficients for our regression line.
 
         self.add(x_vector_3d, one_vector)
 
@@ -136,6 +160,12 @@ class RegressionVisualization(ThreeDScene):
             (1.0, 1.0),
         ]
 
+        # 13
+
+        self.wait(5.5)
+
+        # 18.5
+
         # If we scale the x-vector and one-vector by different amounts, we can see that the points they reach slowly start to
         # resemble a plane. This plane is, in fact, the span of the x and one vectors. Any point on this plane can be
         # reached by a linear combination of one and x, which is exactly what we need to find m and b for our regression line.
@@ -151,7 +181,7 @@ class RegressionVisualization(ThreeDScene):
             dots.add(dot)
             self.play(FadeIn(dot), run_time=0.2)
 
-        self.wait(2)
+        # 18.5 + 2 + 6 * 0.7 = 22.7
 
         # x_vector_3d.remove_updater(x_vector_updater)
         # one_vector.remove_updater(one_vector_updater)
@@ -214,6 +244,12 @@ class RegressionVisualization(ThreeDScene):
             axis_config={"stroke_width": 4},
         )
 
+        # 22.7
+
+        self.wait(3.3)
+
+        # 26
+
         # normal = np.cross(one, x)
         # basis_matrix = np.column_stack([one / np.linalg.norm(one),
         #                                 x / np.linalg.norm(x),
@@ -227,14 +263,20 @@ class RegressionVisualization(ThreeDScene):
         plane.apply_function(map_to_span)
 
         self.play(DrawBorderThenFill(plane), run_time=2)
-        self.play(FadeOut(dots))
+        self.play(FadeOut(dots, run_time=1))
+
+        # 29
+        self.wait(15)
+        # 44
 
         # Do projection
         # Now, let's say our y point is here, some point in space not on the plane spanned by one and x.
         y = np.array([2, 3, 7])
         y_point = Dot3D(axes.c2p(*y), color=YELLOW, radius=0.06)
-        self.play(FadeIn(y_point))
+        self.play(FadeIn(y_point, run_time=1))
         self.wait(1)
+
+        # 46
 
         # normal to span(x, 1)
         normal = np.cross(one, x)
@@ -250,14 +292,21 @@ class RegressionVisualization(ThreeDScene):
 
         proj_dot = Dot3D(axes.c2p(*proj_y), color=BLUE, radius=0.06)
 
+        self.wait(5)
+        # 51
+
         # Then, if we project this point onto the plane, we can find the closest point to y on the plane.
-        self.play(Create(proj_line))
-        self.play(FadeIn(proj_dot))
+        self.play(Create(proj_line, run_time=2))
+        self.play(FadeIn(proj_dot, run_time=1))
         self.wait(1)
+
+        # 55
 
         # Move the vectors x, 1 to the projection point
         A = np.column_stack([x, one])
         (a, b), *_ = np.linalg.lstsq(A, proj_y, rcond=None)
+
+        # 60
 
         # We can now find how much of the x-vector and how much of the one-vector is needed to reach this point,
         # and thus find m and b for our regression line.
