@@ -8,15 +8,15 @@ config.frame_rate = 60
 
 class OrthogonalBases(Scene):
     def construct(self):
-        # To easily find the projection of y onto the subspace spanned by 1 and x, we can first find the orthogonal bases for that subspace,
-        # or two perpendicular vectors that lie in the subspace. Then, we can find the projection of y onto those vectors,
-        # which we already know how to do, and then add those projections together to get the projection of y onto the subspace.
-        # This only works because the vectors are perpendicular, which is why we need to find the orthogonal bases.
+        # The first step to finding the projection of y onto the subspace spanned by 1 and x is to find orthogonal
+        # bases for that subspace, or two perpendicular vectors that lie in the subspace.
+        self.wait(6)
 
+        # Let's see how we can do this with a simple example.
         ortho_bases_text = Text("Orthogonal Bases", font_size=64)
         self.play(Write(ortho_bases_text), run_time=3)
-        self.wait(5)
-        self.play(FadeOut(ortho_bases_text))
+        self.wait(4)
+        self.play(FadeOut(ortho_bases_text), run_time=1)
 
         plane = NumberPlane(
             background_line_style={
@@ -56,12 +56,13 @@ class OrthogonalBases(Scene):
 
         x_vector_tex = MathTex(r"\overrightarrow{x}", color=RED, font_size=30).next_to(x_vector.get_tip())
 
+        # Here, we have the one-vector, drawn in green, and an x-vector, drawn in red.
         self.play(GrowArrow(one_vector), run_time=2)
         self.play(FadeIn(one_vector_tex))
         self.wait(1)
         self.play(GrowArrow(x_vector), run_time=2)
         self.play(FadeIn(x_vector_tex))
-        self.wait(2)
+        self.wait(1)
 
         one_line = DashedLine(
             start=plane.c2p(*(one * -5)),
@@ -69,7 +70,7 @@ class OrthogonalBases(Scene):
             color=GREEN,
         )
 
-        self.play(TransformFromCopy(one_vector, one_line))
+        self.play(TransformFromCopy(one_vector, one_line), run_time=1)
         self.wait(1)
 
         x_to_one_line = DashedLine(
@@ -79,8 +80,9 @@ class OrthogonalBases(Scene):
             dash_length=0.1,
         )
 
-        self.play(Create(x_to_one_line), run_time=2)
-        self.wait(2)
+        # We will first find the projection of the x-vector onto the one-vector.
+        self.play(Create(x_to_one_line), run_time=1.5)
+        self.wait(0.5)
 
         proj_one_x_vector = Arrow(
             start=plane.c2p(0, 0),
@@ -89,9 +91,9 @@ class OrthogonalBases(Scene):
             buff=0,
         )
 
-        proj_tex = MathTex(r"\text{proj}_{\overrightarrow{1}} \overrightarrow{x}", color=YELLOW, font_size=30).next_to(proj_one_x_vector.get_tip())
+        proj_tex = MathTex(r"\mathrm{proj}_{\overrightarrow{1}} (\overrightarrow{x})", color=YELLOW, font_size=30).next_to(proj_one_x_vector.get_tip())
 
-        self.play(TransformFromCopy(x_vector, proj_one_x_vector))
+        self.play(TransformFromCopy(x_vector, proj_one_x_vector), run_time=1.5)
         self.play(FadeIn(proj_tex))
         self.wait(2)
 
@@ -104,8 +106,13 @@ class OrthogonalBases(Scene):
 
         x_hat_vector_tex = MathTex(r"\hat{x}", color=BLUE, font_size=30).next_to(x_hat_vector.get_tip())
 
-        self.play(TransformFromCopy(x_vector, x_hat_vector))
+        # And, as we learned in class, if we subtract this projection from the original x-vector, we are essentially
+        # removing the component of the x-vector that is parallel to the one-vector, leaving us with only the
+        # orthogonal component, which we will call x-hat.
+        self.play(TransformFromCopy(x_vector, x_hat_vector), run_time=5)
         self.play(FadeIn(x_hat_vector_tex))
+
+        self.wait(8)
 
         self.play(FadeOut(x_vector, x_vector_tex, x_to_one_line, proj_one_x_vector, proj_tex))
 
@@ -115,9 +122,10 @@ class OrthogonalBases(Scene):
             color=BLUE,
         )
 
-        self.play(TransformFromCopy(x_hat_vector, x_hat_line))
+        # Thus, by using the one-vector and this new x-hat vector, we have found two orthogonal bases for the subspace spanned by one and x.
+        self.play(TransformFromCopy(x_hat_vector, x_hat_line), run_time=1)
 
-        self.wait(2)
+        self.wait(9)
 
 
 

@@ -94,7 +94,7 @@ class RegressionVisualization(ThreeDScene):
             return mob
 
         x_scale_label.add_updater(update_x_label)
-        self.add(x_scale_label)
+        self.add_fixed_orientation_mobjects(x_scale_label)
 
         one_scale_label = DecimalNumber(
             one_scale.get_value(),
@@ -108,7 +108,7 @@ class RegressionVisualization(ThreeDScene):
             return mob
 
         one_scale_label.add_updater(update_one_label)
-        self.add(one_scale_label)
+        self.add_fixed_orientation_mobjects(one_scale_label)
 
         # scales = [
         #     (2.5, 5.0),
@@ -283,13 +283,20 @@ class RegressionVisualization(ThreeDScene):
         m_target.to_corner(UL).shift(RIGHT * 0.5 + DOWN * 0.5)
         b_target.next_to(m_target, DOWN, aligned_edge=LEFT, buff=0.3)
 
-        self.play(
-            Transform(x_scale_label, m_target),
-            Transform(one_scale_label, b_target),
-            run_time=1.5
-        )
+        m_target.set_opacity(0)
+        b_target.set_opacity(0)
 
-        self.add_fixed_in_frame_mobjects(x_scale_label, one_scale_label)
+        self.add_fixed_in_frame_mobjects(m_target, b_target)
+
+        self.play(m_target.animate.set_opacity(1), b_target.animate.set_opacity(1), run_time=1.5)
+
+        # self.play(
+        #     Transform(x_scale_label, m_target),
+        #     Transform(one_scale_label, b_target),
+        #     run_time=1.5
+        # )
+        #
+        # self.add_fixed_in_frame_mobjects(x_scale_label, one_scale_label)
 
         self.wait(2)
 
@@ -298,73 +305,13 @@ class RegressionVisualization(ThreeDScene):
 
         # -> to orthogonal_bases.py
 
-        # This concept of using projection to minimize the distance between two points can be used for more regressions
-        # than just linear as well. In fact, it can be used to find any regression in the form m1 * f1(x) + m2 * f2(x) + ...
-        # We'd just have to change the math slightly to project onto the span of (f1(x), f2(x), ...) rather than span(x, 1), but the core idea is the same.
-
-        # x_par_vector = x_vector_3d.copy()
-        #
-        # self.wait(1)
-        # self.play(FadeIn(plane))
-        # self.play(one_vector.animate.become(
-        #     Line(
-        #         axes.c2p(*(one * -10)),
-        #         axes.c2p(*(one * 10)),
-        #         color=GREEN,
-        #         stroke_width=4
-        #     )
-        # ))
-        # self.wait(1)
-        # self.play(x_par_vector.animate.become(
-        #     Arrow3D(
-        #         axes.c2p(0, 0, 0),
-        #         axes.c2p(*x_par),
-        #         # buff=0,
-        #         color=YELLOW,
-        #         # stroke_width=4
-        #     )
-        # ))
-        # self.wait(1)
-        # x_orthog = x - x_par
-        # normal = np.cross(one, x_orthog)
-        # basis_matrix_orthog = np.column_stack([one / np.linalg.norm(one),
-        #                                 x_orthog / np.linalg.norm(x_orthog),
-        #                                 normal / np.linalg.norm(normal)])
-        # self.play(
-        #     x_vector_3d.animate.become(
-        #         Arrow3D(
-        #             axes.c2p(0, 0, 0),
-        #             axes.c2p(*x_orthog),
-        #             # buff=0,
-        #             color=RED,
-        #             # stroke_width=4
-        #         )
-        #     ),
-        #     plane.animate.apply_matrix(basis_matrix_orthog @ np.linalg.inv(basis_matrix))
-        # )
-        # self.play(FadeOut(x_par_vector))
-        # self.wait(1)
-        # x_orthog_norm = x_orthog / np.linalg.norm(x_orthog)
-        # self.play(x_vector_3d.animate.become(
-        #     Line(
-        #         axes.c2p(*(x_orthog_norm * -20)),
-        #         axes.c2p(*(x_orthog_norm * 20)),
-        #         color=RED,
-        #         stroke_width=4
-        #     )
-        # ))
-        # Now that we have orthogonal bases for the plane, let's see why they are important.
-        # Let's say that y doesn't lie on this plane, but the closest point to y is here.
-        # Then, this would be the projection of y onto the one-vector, and this would be the projection of y onto the orthogonal basis we just created.
-        # Now, because these bases are orthogonal, we can simply add up these projection vectors to get the vector to the point closest to y on the plane.
-
 
 
         self.wait(4)
         self.stop_ambient_camera_rotation()
 
 def render_manim():
-    command = ["manim", "-p", "--renderer=cairo", "regression_visualization.py", "RegressionVisualization"]
+    command = ["manim", "-p", "--renderer=opengl", "regression_visualization.py", "RegressionVisualization"]
     subprocess.run(command)
 
 if __name__ == "__main__":

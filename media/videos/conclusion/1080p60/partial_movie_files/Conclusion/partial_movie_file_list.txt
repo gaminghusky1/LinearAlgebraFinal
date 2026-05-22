@@ -1,0 +1,5 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/JustinMa/PycharmProjects/LinearAlgebraFinal/media/videos/conclusion/1080p60/partial_movie_files/Conclusion/2257293077_3857260022_223132457.mp4'
+file 'file:/Users/JustinMa/PycharmProjects/LinearAlgebraFinal/media/videos/conclusion/1080p60/partial_movie_files/Conclusion/2135761390_3208893365_2148928383.mp4'
+file 'file:/Users/JustinMa/PycharmProjects/LinearAlgebraFinal/media/videos/conclusion/1080p60/partial_movie_files/Conclusion/2135761390_3004383555_1697136646.mp4'
+file 'file:/Users/JustinMa/PycharmProjects/LinearAlgebraFinal/media/videos/conclusion/1080p60/partial_movie_files/Conclusion/2135761390_2844360058_210259938.mp4'

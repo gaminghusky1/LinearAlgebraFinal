@@ -9,13 +9,24 @@ config.frame_rate = 60
 class RegressionIntro(Scene):
     def construct(self):
         # TODO: Need script for start
+        # Welcome to our Linear Algebra final project!
         # In this video, we will explore least-squares linear regression, first explaining what it is
         # and what it does, and then diving deep into the math behind how it works.
 
         intro_text = Text("Least-Squares Linear Regression", font_size=64)
-        self.play(Write(intro_text), run_time=3)
-        self.wait(2)
-        self.play(FadeOut(intro_text))
+        self.play(Write(intro_text), run_time=2)
+        self.wait(6)
+        self.play(intro_text.animate.to_edge(UP))
+        topics = BulletedList(
+            "What is it, and what does it do?",
+            "What math makes it work?",
+            font_size=56,
+        ).next_to(intro_text, DOWN, buff=0.5).to_edge(LEFT)
+        self.play(Write(topics[0]), run_time=2)
+        self.play(Write(topics[1]), run_time=2)
+        self.wait(3)
+        self.play(FadeOut(intro_text, topics), run_time=1)
+        self.wait(1)
 
         # Regression example
         data_points = np.array([
@@ -46,6 +57,7 @@ class RegressionIntro(Scene):
             },
         )
 
+        # To see what exactly a linear regression is...
         # Let's start with a plane
         self.play(DrawBorderThenFill(plane), run_time=2)
 
@@ -55,7 +67,6 @@ class RegressionIntro(Scene):
             point_group.add(Dot(plane.c2p(*point), color=YELLOW))
 
         # And add some data points
-        self.wait(1)
         self.play(FadeIn(point_group), run_time=2)
 
         self.wait(3)
@@ -63,13 +74,16 @@ class RegressionIntro(Scene):
         # Draw Regression Line
         regression_line = plane.plot(regression_function, color=WHITE)
 
-        # Least-squares linear regression is essentially finding the line that best fits a set of data points by
-        # minimizing the squared distance between the points and the predicted line, which is also called the squared error.
+        # Least-squares linear regression is essentially finding the line that best fits a set of data points.
         self.play(Create(regression_line), run_time=2)
+
+        # 26
 
         error_lines = VGroup()
         errors = VGroup()
 
+
+        # The vertical distances from the regression line to all the points are called the errors.
         for point in data_points:
             y_hat = regression_function(point[0])
             curr_error_line = DashedLine(plane.c2p(*point), plane.c2p(point[0], y_hat), dash_length=0.15, color=RED)
@@ -83,7 +97,9 @@ class RegressionIntro(Scene):
             self.play(Create(curr_error_line), run_time=0.5)
             self.play(FadeIn(curr_error), run_time=0.5)
 
-        self.wait(5)
+        self.wait(1)
+
+        # If we square each of these distances, we get the squared errors.
 
         # Animated terms squaring
         error_exponents = VGroup()
@@ -94,7 +110,6 @@ class RegressionIntro(Scene):
 
         self.play(*[FadeIn(exp) for exp in error_exponents], run_time=1.5)
 
-        # You can see from this calculation that the sum squared error for this regression line is ....
         squared_errors = VGroup()
         square_transforms = []
         for error, exponent in zip(errors, error_exponents):
@@ -115,6 +130,11 @@ class RegressionIntro(Scene):
         self.wait(2)
 
         # Animate squared terms moving to the top of the screen and summing
+
+        # Then, adding these squared errors together, we get the sum of squared errors, or SSE.
+        # We can see that the sum of squared errors for this regression line is 5.63.
+
+        # This sum of squared errors is the value we want to minimize, in order to find the best-fitting regression line.
         desired_font_size = 44
         scale_factor = desired_font_size / 24
         errors.generate_target()
@@ -123,8 +143,8 @@ class RegressionIntro(Scene):
         errors.target.next_to(graph_group, UP, buff=0.5)
         self.play(MoveToTarget(errors), run_time=2)
 
-        # We can show that this is the minimum squared error by moving the regression line slightly in either direction
-        # and observing that the error increases no matter how we change it.
+        # We can show that the regression line we have on screen right now is indeed the best-fitting by slightly
+        # tilting it in either direction and observing that the error increases no matter how we change it.
         plus_signs = VGroup()
         for left_error, right_error in zip(errors[:-1], errors[1:]):
             plus = MathTex("+", font_size=desired_font_size)
@@ -164,7 +184,8 @@ class RegressionIntro(Scene):
 
         mse_func = MathTex("SSE = \\sum_{i=1}^{n} (y_i - \\hat{y}_i)^2", font_size=36).to_edge(UP)
 
-        self.play(Write(mse_func), run_time=1)
+        self.play(Write(mse_func), run_time=5)
+        self.wait(6)
 
 
         x_mean = float(np.mean(data_points[:, 0]))
@@ -235,9 +256,9 @@ class RegressionIntro(Scene):
 
         # Wiggle the slope up/down and show SSE change (higher away from optimum)
         delta = 0.25
-        self.play(m.animate.set_value(slope + delta), run_time=1.6)
-        self.play(m.animate.set_value(slope - delta), run_time=2.0)
-        self.play(m.animate.set_value(slope), run_time=1.6)
+        self.play(m.animate.set_value(slope + delta), run_time=2.5)
+        self.play(m.animate.set_value(slope - delta), run_time=3.0)
+        self.play(m.animate.set_value(slope), run_time=2.5)
         self.wait(1)
 
         # (Optional) cleanup: stop live updates if you continue animating other things
